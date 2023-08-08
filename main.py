@@ -9,8 +9,6 @@ import threading
 from random import randint
 import atexit
 
-StartTime = time.time()
-
 # Locations 
 INDONESIA_COORDINATES = [(106.8275,-6.1750), (112.7378, -7.2458), (98.6739, 3.5894), (112.6200, -7.9800), (103.59932, -1.61775)]
 PAKISTAN_COORDINATES = [(33.738045, 73.084488), (31.582045, 74.329376), (24.860966, 66.990501), (24.946218, 67.005615), (34.025917, 71.560135), (24.852768, 67.074760)]
