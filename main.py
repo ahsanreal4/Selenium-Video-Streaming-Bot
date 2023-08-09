@@ -69,7 +69,7 @@ class Utils:
 
     @staticmethod            
     # Creating driver
-    def create_browser(location=None):
+    def create_browser():
         options=webdriver.ChromeOptions()
         options.add_argument("start-maximized")
         options.add_experimental_option("excludeSwitches", ["enable-automation"])
@@ -86,17 +86,23 @@ class Utils:
             "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36")
         #===================
         
+        # free proxy server URL
+        # proxy_ip = "170.239.207.188"
+        # proxy_port = "999"
+        # proxy_server_url = f"{proxy_ip}:{proxy_port}"
+        # options.add_argument(f'--proxy-server={proxy_server_url}')
+        
         options.page_load_strategy='eager'
         browser = webdriver.Chrome(service=Service("chromedriver.exe"), options=options)
         
-        if location != None:        
-            (longitude, latitude) = location
-            accuracy = 100
-            browser.execute_cdp_cmd("Emulation.setGeolocationOverride", {
-                "latitude": latitude,
-                "longitude": longitude,
-                "accuracy": accuracy
-            })
+        # if location != None:        
+        #     (longitude, latitude) = location
+        #     accuracy = 100
+        #     browser.execute_cdp_cmd("Emulation.setGeolocationOverride", {
+        #         "latitude": latitude,
+        #         "longitude": longitude,
+        #         "accuracy": accuracy
+        #     })
         return browser
     
     @staticmethod            
@@ -118,7 +124,7 @@ class Utils:
     @staticmethod           
     def create_bot():
         watch_time = Utils.generate_random_number(BOT_MIN_TIME_IN_MINUTES, BOT_MAX_TIME_IN_MINUTES)
-        browser = Utils.create_browser(Utils.get_location('Indonesia'))
+        browser = Utils.create_browser()
         return Bot(browser, watch_time)
 
 class Bot:
@@ -187,7 +193,7 @@ class Bot:
             bot.go_to_streaming_page()
         
     def wait_for_page_to_load(self):
-        waiting_time = 5 * 60
+        waiting_time = 2 * 60
         try:
             WebDriverWait(self.browser, waiting_time).until(EC.presence_of_element_located((By.TAG_NAME, 'video')))
             return True
