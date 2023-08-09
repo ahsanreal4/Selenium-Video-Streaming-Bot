@@ -23,7 +23,7 @@ SUCCESS_BOTS = 0
 
 # Variables to manage maximum number of bots working paralelly
 THREADS_POOL_COUNT = 0
-MAX_THREADS = 10
+MAX_THREADS = 1 
 
 # Range of time for bot to use the website
 # TODO: Change values to 8 and 35
@@ -87,10 +87,10 @@ class Utils:
         #===================
         
         # free proxy server URL
-        # proxy_ip = "170.239.207.188"
-        # proxy_port = "999"
-        # proxy_server_url = f"{proxy_ip}:{proxy_port}"
-        # options.add_argument(f'--proxy-server={proxy_server_url}')
+        proxy_ip = "2.56.119.93"
+        proxy_port = "5074"
+        proxy_server_url = f"{proxy_ip}:{proxy_port}"
+        options.add_argument(f'--proxy-server={proxy_server_url}')
         
         options.page_load_strategy='eager'
         browser = webdriver.Chrome(service=Service("chromedriver.exe"), options=options)
