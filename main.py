@@ -15,7 +15,7 @@ PAKISTAN_COORDINATES = [(33.738045, 73.084488), (31.582045, 74.329376), (24.8609
 
 # Variables to control bots
 URL = "https://www.polygame.io"
-NUMBER_OF_BOTS = 100
+NUMBER_OF_BOTS = 900
 BOTS_LIST = []
 
 # Variable to tell us how many bots worked correctly
@@ -23,7 +23,7 @@ SUCCESS_BOTS = 0
 
 # Variables to manage maximum number of bots working paralelly
 THREADS_POOL_COUNT = 0
-MAX_THREADS = 1 
+MAX_THREADS = 5
 
 # Range of time for bot to use the website
 # TODO: Change values to 8 and 35
@@ -87,10 +87,10 @@ class Utils:
         #===================
         
         # free proxy server URL
-        proxy_ip = "2.56.119.93"
-        proxy_port = "5074"
-        proxy_server_url = f"{proxy_ip}:{proxy_port}"
-        options.add_argument(f'--proxy-server={proxy_server_url}')
+        # proxy_ip = "2.56.119.93"
+        # proxy_port = "5074"
+        # proxy_server_url = f"{proxy_ip}:{proxy_port}"
+        # options.add_argument(f'--proxy-server={proxy_server_url}')
         
         options.page_load_strategy='eager'
         browser = webdriver.Chrome(service=Service("chromedriver.exe"), options=options)
@@ -247,7 +247,7 @@ class Bot:
             
 # Driver function that controls main flow of the program
 def main():
-    global THREADS_POOL_COUNT, MAX_THREADS, NUMBER_OF_BOTS
+    global THREADS_POOL_COUNT, MAX_THREADS, NUMBER_OF_BOTS, SUCCESS_BOTS
     # NUMBER_OF_BOTS = Utils.generate_random_number(10000, 17000)
     wait_time = 5
     while True:
@@ -259,7 +259,7 @@ def main():
             THREADS_POOL_COUNT += 1
         else:
             Utils.delay(wait_time)
-        if len(BOTS_LIST) >= NUMBER_OF_BOTS:
+        if SUCCESS_BOTS >= NUMBER_OF_BOTS:
             break
             
 def exit_handler():
