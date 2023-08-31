@@ -15,7 +15,7 @@ PAKISTAN_COORDINATES = [(33.738045, 73.084488), (31.582045, 74.329376), (24.8609
 
 # Variables to control bots
 URL = "https://www.polygame.io"
-NUMBER_OF_BOTS = 900
+NUMBER_OF_BOTS = 300
 BOTS_LIST = []
 
 # Variable to tell us how many bots worked correctly
@@ -27,8 +27,8 @@ MAX_THREADS = 5
 
 # Range of time for bot to use the website
 # TODO: Change values to 8 and 35
-BOT_MIN_TIME_IN_MINUTES = 1
-BOT_MAX_TIME_IN_MINUTES = 1
+BOT_MIN_TIME_IN_MINUTES = 5
+BOT_MAX_TIME_IN_MINUTES = 8
     
 class Utils:
     # Connecting the browser driver to the url
@@ -76,7 +76,7 @@ class Utils:
         options.add_experimental_option('excludeSwitches', ['enable-logging'])
         options.add_experimental_option('useAutomationExtension', False)
         options.add_argument('--disable-blink-features=AutomationControlled')
-        options.add_argument("--mute-audio")
+        # options.add_argument("--mute-audio")
         
         # Lines for headless
         options.add_argument("--window-size=1920,1080")
@@ -184,6 +184,41 @@ class Bot:
                 
         print(f"Bot {self.id} - Video clicked")
         
+    def click_video_on_streaming_page(self):
+        video_element = self.browser.find_element(By.TAG_NAME, "video")
+        video_id = video_element.get_attribute('id')
+        if video_element:
+            is_video_paused = self.browser.execute_script(f"return document.getElementById('{video_id}')?.paused;")
+            
+            # click live video
+            if is_video_paused:        
+                self.browser.execute_script(f"document.getElementById('{video_id}')?.click()")
+            
+            is_video_paused = self.browser.execute_script(f"return document.getElementById('{video_id}')?.paused;")
+            
+            # if video is paused that means it's a recorded video so play recorded video
+            if is_video_paused:
+                # click recorded video
+                # keep checking for recorded videos and clicking it until it starts playing
+                tries = 0
+                max_tries = 10
+                while is_video_paused:
+                    if tries >= max_tries:
+                            break
+                    tries += 1
+                    try:
+                        video_element.click()
+                    except Exception:
+                        continue
+                    Utils.delay(1)
+                    is_video_paused = self.browser.execute_script(f"return document.getElementById('{video_id}')?.paused;")
+                    if is_video_paused:
+                        recorded_video_load_delay = 5
+                        Utils.delay(recorded_video_load_delay)
+            
+            print(f"Bot {self.id} - Video clicked on streaming page")
+            
+        
     def create_and_start_new_bot(self):
             self.stop_bot()
             global THREADS_POOL_COUNT
@@ -237,6 +272,9 @@ class Bot:
             self.stop_bot()
             return
         self.click_video(video_elements_length)
+        if not self.wait_for_page_to_load():
+            return
+        self.click_video_on_streaming_page()
         self.watch_and_close()
     
     def stop_bot(self):
@@ -248,6 +286,8 @@ class Bot:
 # Driver function that controls main flow of the program
 def main():
     global THREADS_POOL_COUNT, MAX_THREADS, NUMBER_OF_BOTS, SUCCESS_BOTS
+    if MAX_THREADS > NUMBER_OF_BOTS:
+        MAX_THREADS = NUMBER_OF_BOTS
     # NUMBER_OF_BOTS = Utils.generate_random_number(10000, 17000)
     wait_time = 5
     while True:
