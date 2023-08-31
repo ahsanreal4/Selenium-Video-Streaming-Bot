@@ -15,7 +15,7 @@ PAKISTAN_COORDINATES = [(33.738045, 73.084488), (31.582045, 74.329376), (24.8609
 
 # Variables to control bots
 URL = "https://www.polygame.io"
-NUMBER_OF_BOTS = 300
+NUMBER_OF_BOTS = 400
 BOTS_LIST = []
 
 # Variable to tell us how many bots worked correctly
@@ -27,8 +27,8 @@ MAX_THREADS = 5
 
 # Range of time for bot to use the website
 # TODO: Change values to 8 and 35
-BOT_MIN_TIME_IN_MINUTES = 5
-BOT_MAX_TIME_IN_MINUTES = 8
+BOT_MIN_TIME_IN_MINUTES = 3
+BOT_MAX_TIME_IN_MINUTES = 5
     
 class Utils:
     # Connecting the browser driver to the url
@@ -76,7 +76,7 @@ class Utils:
         options.add_experimental_option('excludeSwitches', ['enable-logging'])
         options.add_experimental_option('useAutomationExtension', False)
         options.add_argument('--disable-blink-features=AutomationControlled')
-        # options.add_argument("--mute-audio")
+        options.add_argument("--mute-audio")
         
         # Lines for headless
         options.add_argument("--window-size=1920,1080")
