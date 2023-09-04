@@ -5,17 +5,14 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
+from datetime import datetime
 import threading
 from random import randint
 import atexit
 
-# Locations 
-INDONESIA_COORDINATES = [(106.8275,-6.1750), (112.7378, -7.2458), (98.6739, 3.5894), (112.6200, -7.9800), (103.59932, -1.61775)]
-PAKISTAN_COORDINATES = [(33.738045, 73.084488), (31.582045, 74.329376), (24.860966, 66.990501), (24.946218, 67.005615), (34.025917, 71.560135), (24.852768, 67.074760)]
-
 # Variables to control bots
 URL = "https://www.polygame.io"
-NUMBER_OF_BOTS = 400
+NUMBER_OF_BOTS = 10
 BOTS_LIST = []
 
 # Variable to tell us how many bots worked correctly
@@ -27,8 +24,8 @@ MAX_THREADS = 5
 
 # Range of time for bot to use the website
 # TODO: Change values to 8 and 35
-BOT_MIN_TIME_IN_MINUTES = 3
-BOT_MAX_TIME_IN_MINUTES = 5
+BOT_MIN_TIME_IN_MINUTES = 1
+BOT_MAX_TIME_IN_MINUTES = 1
     
 class Utils:
     # Connecting the browser driver to the url
@@ -94,32 +91,11 @@ class Utils:
         
         options.page_load_strategy='eager'
         browser = webdriver.Chrome(service=Service("chromedriver.exe"), options=options)
-        
-        # if location != None:        
-        #     (longitude, latitude) = location
-        #     accuracy = 100
-        #     browser.execute_cdp_cmd("Emulation.setGeolocationOverride", {
-        #         "latitude": latitude,
-        #         "longitude": longitude,
-        #         "accuracy": accuracy
-        #     })
         return browser
     
     @staticmethod            
     def delay(seconds):
         time.sleep(seconds)
-        
-    @staticmethod            
-    def get_random_coordinates(coordinates_list):
-        random_number = Utils.generate_random_number(0, len(coordinates_list) - 1)
-        return coordinates_list[random_number]
-        
-    @staticmethod            
-    def get_location(name):
-        if name == 'Indonesia':
-            return Utils.get_random_coordinates(INDONESIA_COORDINATES)
-        elif name == 'Pakistan':
-            return Utils.get_random_coordinates(PAKISTAN_COORDINATES)
         
     @staticmethod           
     def create_bot():
@@ -252,9 +228,17 @@ class Bot:
             return False
         
     def watch_and_close(self):
-        global SUCCESS_BOTS
+        global SUCCESS_BOTS        
+        
+        start = datetime.now()
         Utils.delay(self.watch_time)
-        print(f"Bot {self.id} - Task completed. Stopping")
+        end = datetime.now()
+        
+        difference = end - start
+        seconds = difference.total_seconds()
+        minutes = seconds / 60
+        print(f"Bot {self.id} - Task completed. Stopping after watching stream for {int(minutes)} minutes.")
+        
         SUCCESS_BOTS += 1
         print(f"Total: {NUMBER_OF_BOTS}, Success: {SUCCESS_BOTS}")
         self.stop_bot()
@@ -291,16 +275,20 @@ def main():
     # NUMBER_OF_BOTS = Utils.generate_random_number(10000, 17000)
     wait_time = 5
     while True:
-        if THREADS_POOL_COUNT < MAX_THREADS:
+        # If required bots run successfully stop the program
+        if SUCCESS_BOTS >= NUMBER_OF_BOTS:
+            break
+        # If threads pool count is not less than max threads create a new bot
+        # If threads pool count and success bots is less than total number of bots then create a new bot
+        if THREADS_POOL_COUNT < MAX_THREADS and THREADS_POOL_COUNT + SUCCESS_BOTS < NUMBER_OF_BOTS:
             bot = Utils.create_bot()
             BOTS_LIST.append(bot)
             thread=threading.Thread(target=bot.go_to_streaming_page)
             thread.start()        
             THREADS_POOL_COUNT += 1
+        # Just delay the while loop to wait for 5 seconds to wait for current bots to finish
         else:
             Utils.delay(wait_time)
-        if SUCCESS_BOTS >= NUMBER_OF_BOTS:
-            break
             
 def exit_handler():
     if THREADS_POOL_COUNT == 0:
