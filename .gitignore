@@ -2,3 +2,4 @@
 /LICENSE.chromedriver
 /set_interval.py
 /__pycache__
+.vscode
