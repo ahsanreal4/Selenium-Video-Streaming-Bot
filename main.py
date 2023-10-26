@@ -136,7 +136,7 @@ class Bot:
 
     def click_icon(self):
         popup_icon_id = "popup-close-icon-bot"
-        max_tries = 30
+        max_tries = 20
         tries = 0
         while True:
             try:
@@ -161,7 +161,7 @@ class Bot:
         return len(video_elements)
 
     def click_video(self, video_elements_length):
-        max_tries = video_elements_length * 10
+        max_tries = video_elements_length * 3
         tries = 0
         curr_id = 0
         max_id = video_elements_length - 1
@@ -294,7 +294,7 @@ class Bot:
         video_elements_length = self.find_video_elements_length()
         if video_elements_length == 0:
             print(f"Bot {self.id} - No live streams found! Stopping the bot")
-            self.stop_bot()
+            self.create_and_start_new_bot()
             return
         if not self.click_video(video_elements_length):
             return
