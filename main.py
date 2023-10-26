@@ -1,5 +1,5 @@
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException, InvalidArgumentException, TimeoutException, WebDriverException
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
@@ -40,12 +40,11 @@ class Utils:
             page_load_timeout = 5000
             browser.set_page_load_timeout(page_load_timeout)
             browser.get(url)
-        except InvalidArgumentException:
-            print(f"Bot {bot_id} - Error while opening website.")
-            browser.quit()
+            return True
         except Exception:
             print(f"Bot {bot_id} - Error while opening website.")
             browser.quit()
+            return False
 
     @staticmethod
     # Find element by id and prints error if not found
@@ -239,16 +238,6 @@ class Bot:
             WebDriverWait(self.browser, waiting_time).until(
                 EC.presence_of_element_located((By.TAG_NAME, 'video')))
             return True
-        except TimeoutException:
-            print(
-                f"Bot {self.id} - Page not loaded correctly! Closing the bot and creating a new bot.")
-            self.create_and_start_new_bot()
-            return False
-        except WebDriverException:
-            print(
-                f"Bot {self.id} - Page not loaded correctly! Closing the bot and creating a new bot.")
-            self.create_and_start_new_bot()
-            return False
         except Exception:
             print(
                 f"Bot {self.id} - Page not loaded correctly! Closing the bot and creating a new bot.")
@@ -257,9 +246,14 @@ class Bot:
 
     def connect_bot(self):
         try:
-            Utils.connect(self.browser, URL, self.id)
-            print(f"Bot {self.id} - Connected!")
-            return True
+            if Utils.connect(self.browser, URL, self.id):
+                print(f"Bot {self.id} - Connected!")
+                return True
+            else:
+                print(
+                    f"Bot {self.id} - Page not loaded correctly! Closing the bot and creating a new bot.")
+                self.create_and_start_new_bot()
+                return False
         except TimeoutException:
             print(
                 f'Bot {self.id} - Timeout Exception caught! Closing the bot and creating a new bot.')
