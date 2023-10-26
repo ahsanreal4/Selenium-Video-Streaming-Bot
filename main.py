@@ -171,7 +171,8 @@ class Bot:
                 if tries >= max_tries:
                     print(
                         f"Bot {self.id} - Couldn't open video! Stopping the bot.")
-                    return
+                    self.create_and_start_new_bot()
+                    return False
                 tries += 1
                 video_id = f"video-carousel-{curr_id}_html5_api"
                 # print(f"Bot {self.id} - {video_id}")
@@ -185,6 +186,7 @@ class Bot:
                 print(f"Bot {self.id} - Couldn't click video")
 
         print(f"Bot {self.id} - Video clicked")
+        return True
 
     def click_video_on_streaming_page(self):
         video_element = self.browser.find_element(By.TAG_NAME, "video")
@@ -294,7 +296,8 @@ class Bot:
             print(f"Bot {self.id} - No live streams found! Stopping the bot")
             self.stop_bot()
             return
-        self.click_video(video_elements_length)
+        if not self.click_video(video_elements_length):
+            return
         if not self.wait_for_page_to_load():
             return
         self.click_video_on_streaming_page()
