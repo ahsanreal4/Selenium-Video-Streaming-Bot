@@ -12,7 +12,7 @@ import atexit
 
 # Variables to control bots
 URL = "https://www.polygame.io"
-NUMBER_OF_BOTS = 300
+NUMBER_OF_BOTS = 4000
 BOTS_LIST = []
 AVAILABLE_PROXY_IPS = ["146.19.81.205:65432", "146.19.81.220:65432", "146.19.81.222:65432", "146.19.81.237:65432", "146.19.81.252:65432", "146.19.81.192:65432", "146.19.81.193:65432", "146.19.81.194:65432", "146.19.81.195:65432", "146.19.81.196:65432", "146.19.81.197:65432", "146.19.81.198:65432", "146.19.81.199:65432", "146.19.81.200:65432", "146.19.81.201:65432", "146.19.81.203:65432", "146.19.81.206:65432", "146.19.81.207:65432", "146.19.81.208:65432", "146.19.81.209:65432", "146.19.81.210:65432", "146.19.81.211:65432", "146.19.81.212:65432", "146.19.81.214:65432", "146.19.81.215:65432",
                        "146.19.81.216:65432", "146.19.81.218:65432", "146.19.81.223:65432", "146.19.81.224:65432", "146.19.81.225:65432", "146.19.81.226:65432", "146.19.81.227:65432", "146.19.81.229:65432", "146.19.81.230:65432", "146.19.81.231:65432", "146.19.81.233:65432", "146.19.81.235:65432", "146.19.81.238:65432", "146.19.81.239:65432", "146.19.81.240:65432", "146.19.81.241:65432", "146.19.81.242:65432", "146.19.81.243:65432", "146.19.81.244:65432", "146.19.81.246:65432", "146.19.81.247:65432", "146.19.81.248:65432", "146.19.81.250:65432", "146.19.81.254:65432", "146.19.81.255:65432"]
@@ -21,6 +21,9 @@ IN_USE_PROXY_IPS = []
 # Variable to tell us how many bots worked correctly
 SUCCESS_BOTS = 0
 
+# Variable to tell us how many bots raised errors
+ERROR_BOTS = 0
+
 # Variables to manage maximum number of bots working paralelly
 THREADS_POOL_COUNT = 0
 MAX_THREADS = 5
@@ -28,7 +31,7 @@ MAX_THREADS = 5
 # Range of time for bot to use the website
 # TODO: Change values to 8 and 35
 BOT_MIN_TIME_IN_MINUTES = 1
-BOT_MAX_TIME_IN_MINUTES = 2
+BOT_MAX_TIME_IN_MINUTES = 1
 
 
 class Utils:
@@ -228,8 +231,9 @@ class Bot:
 
     def create_and_start_new_bot(self):
         self.stop_bot()
-        global THREADS_POOL_COUNT
+        global THREADS_POOL_COUNT, ERROR_BOTS
         THREADS_POOL_COUNT += 1
+        ERROR_BOTS += 1
         bot = Utils.create_bot(self.ip)
         print(f'Bot {bot.id} created.')
         bot.go_to_streaming_page()
@@ -281,7 +285,8 @@ class Bot:
             f"Bot {self.id} - Task completed. Stopping after watching stream for {int(minutes)} minutes.")
 
         SUCCESS_BOTS += 1
-        print(f"Total: {NUMBER_OF_BOTS}, Success: {SUCCESS_BOTS}")
+        print(
+            f"Total: {NUMBER_OF_BOTS}, Success: {SUCCESS_BOTS}, Error: {ERROR_BOTS}, Threads count: {THREADS_POOL_COUNT}")
         self.stop_bot()
 
     def go_to_streaming_page(self):
