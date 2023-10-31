@@ -231,12 +231,8 @@ class Bot:
 
     def create_and_start_new_bot(self):
         self.stop_bot()
-        global THREADS_POOL_COUNT, ERROR_BOTS
-        THREADS_POOL_COUNT += 1
+        global ERROR_BOTS
         ERROR_BOTS += 1
-        bot = Utils.create_bot(self.ip)
-        print(f'Bot {bot.id} created.')
-        bot.go_to_streaming_page()
 
     def wait_for_page_to_load(self):
         waiting_time = 2 * 60
@@ -335,6 +331,7 @@ def main():
             if len(AVAILABLE_PROXY_IPS) > 0:
                 ip_to_use = AVAILABLE_PROXY_IPS[0]
             if ip_to_use == None:
+                print("No available IP")
                 Utils.delay(wait_time)
                 continue
             bot = Utils.create_bot(ip_to_use)
