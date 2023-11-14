@@ -139,7 +139,7 @@ class Bot:
 
     def click_icon(self):
         popup_icon_id = "popup-close-icon-bot"
-        max_tries = 20
+        max_tries = 5
         tries = 0
         while True:
             try:
@@ -164,7 +164,7 @@ class Bot:
         return len(video_elements)
 
     def click_video(self, video_elements_length):
-        max_tries = video_elements_length * 3
+        max_tries = video_elements_length * 2
         tries = 0
         curr_id = 0
         max_id = video_elements_length - 1
@@ -309,7 +309,10 @@ class Bot:
         THREADS_POOL_COUNT -= 1
         IN_USE_PROXY_IPS = Utils.remove_ip_from_list(self.ip, IN_USE_PROXY_IPS)
         AVAILABLE_PROXY_IPS.append(self.ip)
-        self.browser.quit()
+        try:
+            self.browser.quit()
+        except Exception:
+            print(f"Bot {self.id} - Error while closing the browser driver")
 
 # Driver function that controls main flow of the program
 
