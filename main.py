@@ -317,7 +317,7 @@ def main():
     if MAX_THREADS > NUMBER_OF_BOTS:
         MAX_THREADS = NUMBER_OF_BOTS
     # NUMBER_OF_BOTS = Utils.generate_random_number(10000, 17000)
-    wait_time = 5
+    wait_time = 1
     while True:
         # If required bots run successfully stop the program
         if SUCCESS_BOTS >= NUMBER_OF_BOTS:
@@ -337,7 +337,7 @@ def main():
             thread = threading.Thread(target=bot.go_to_streaming_page)
             thread.start()
             THREADS_POOL_COUNT += 1
-        # Just delay the while loop to wait for 5 seconds to wait for current bots to finish
+        # Just delay the while loop to wait for some seconds to wait for current bots to finish
         else:
             Utils.delay(wait_time)
 
