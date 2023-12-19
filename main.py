@@ -285,8 +285,8 @@ class Bot:
             return
         if not self.wait_for_page_to_load():
             return
-        if not self.click_icon():
-            return
+        # if not self.click_icon():
+        #     return
         video_elements_length = self.find_video_elements_length()
         if video_elements_length == 0:
             print(f"Bot {self.id} - No live streams found! Stopping the bot")
@@ -317,7 +317,7 @@ def main():
     if MAX_THREADS > NUMBER_OF_BOTS:
         MAX_THREADS = NUMBER_OF_BOTS
     # NUMBER_OF_BOTS = Utils.generate_random_number(10000, 17000)
-    wait_time = 1
+    wait_time = 0.5
     while True:
         # If required bots run successfully stop the program
         if SUCCESS_BOTS >= NUMBER_OF_BOTS:
